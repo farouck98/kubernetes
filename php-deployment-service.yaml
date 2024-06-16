@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpadmin
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: phpadmin
+  template:
+    metadata:
+      labels:
+        component: phpadmin
+    spec:
+      containers:
+      - name: phpadmin
+        image: phpmyadmin
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_DATABASE
+            valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: MYSQL_DATABASE
+          - name: MYSQL_USER
+            valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: MYSQL_USER
+          - name: MYSQL_PASSWORD
+            valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: MYSQL_PASSWORD
+          - name: PMA_HOST
+            value: "mariadb"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpadmin
+spec:
+  type: NodePort
+  selector:
+    component: phpadmin
+  ports:
+  - port: 8000
+    targetPort: 80
+
+

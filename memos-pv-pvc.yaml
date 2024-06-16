@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: memos-pv
+spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/farouck/memos-data" #sur windows"/run/desktop/mnt/host/c/Users/Dell/Desktop/kubernetes_project/memos-data"
+  storageClassName: hostpath
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: memos-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: hostpath
+  volumeName: memos-pv
+  

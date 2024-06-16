@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: memos-ingress
+spec:
+  rules:
+    - host: memos.localhost.com
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: memos-services
+                port:
+                  number: 5230

@@ -1,0 +1,43 @@
+kind: Deployment
+metadata:
+  name: memos-deployment
+  labels:
+    app: memos
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: memos
+  template:
+    metadata:
+      labels:
+        app: memos
+    spec:
+      containers:
+      - name: memos
+        image: neosmemo/memos:stable
+        env:
+          - name: MEMOS_DRIVER
+            valueFrom:
+                secretKeyRef:
+                  name: memos-secret
+                  key: MEMOS_DRIVER
+          - name: MEMOS_DSN
+            valueFrom:
+                secretKeyRef:
+                  name: memos-secret
+                  key: MEMOS_DSN
+        ports:
+        - containerPort: 5230
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+        volumeMounts:
+        - name: memos-data
+          mountPath: "/var/opt/memos"
+      volumes:
+      - name: memos-data
+        persistentVolumeClaim:
+          claimName: memos-pvc
